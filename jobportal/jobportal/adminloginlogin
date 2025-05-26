@@ -1,0 +1,18 @@
+# server/app.py
+from bson import ObjectId
+from flask import jsonify
+
+@app.route('/api/admin/users', methods=['GET']) # type: ignore
+def get_all_users():
+    token = request.headers.get('Authorization') # type: ignore
+    decoded = jwt.decode(token, SECRET, algorithms=['HS256']) # type: ignore
+    if decoded['role'] != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    users_list = []
+    for user in users.find(): # type: ignore
+        user['_id'] = str(user['_id'])
+        user.pop('password', None)
+        users_list.append(user)
+
+    return jsonify(users_list)

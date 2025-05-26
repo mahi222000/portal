@@ -1,0 +1,13 @@
+@app.route('/api/admin/jobs', methods=['GET']) # type: ignore
+def get_all_jobs():
+    token = request.headers.get('Authorization') # type: ignore
+    decoded = jwt.decode(token, SECRET, algorithms=['HS256']) # type: ignore
+    if decoded['role'] != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403 # type: ignore
+
+    jobs_list = []
+    for job in db['jobs'].find(): # type: ignore
+        job['_id'] = str(job['_id'])
+        jobs_list.append(job)
+
+    return jsonify(jobs_list) # type: ignore
